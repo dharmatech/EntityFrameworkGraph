@@ -3,7 +3,7 @@
 * Graph database in Entity Framework
 * Data browser in WPF
 * Code-first definitions are in [Entities.cs](EntityFrameworkGraph/Entities.cs)
-* The data browser is in [BrowserWindow.cs](EntityFrameworkGraph/Entities.cs)
+* The data browser is in [BrowserWindow.cs](EntityFrameworkGraph/BrowserWindow.cs)
 * The data browser is pure C# - no XAML
 * Entitlements and Access Control Management [example](EntityFrameworkGraph/EntitlementsAndAccessControlManagement.cs). [Original Cypher version](http://gist.neo4j.org/?4471127413fd724ed0a3). 
 
