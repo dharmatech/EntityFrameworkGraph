@@ -5,7 +5,7 @@
 * Code-first definitions are in [Entities.cs](EntityFrameworkGraph/Entities.cs)
 * The data browser is in [BrowserWindow.cs](EntityFrameworkGraph/Entities.cs)
 * The data browser is pure C# - no XAML
-* Entitlements and Access Control Management [example](EntityFrameworkGraph/EntitlementsAndAccessControlManagement.cs). [More info](EntityFrameworkGraph/EntitlementsAndAccessControlManagement.md).
+* Entitlements and Access Control Management [example](EntityFrameworkGraph/EntitlementsAndAccessControlManagement.cs). [Original Cypher version](http://gist.neo4j.org/?4471127413fd724ed0a3). 
 
 # Comparison with Neo4j terminology
 
