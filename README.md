@@ -54,16 +54,15 @@ MATCH
 
   (admin:administrator {name: 'Ben'})-[:MEMBER_OF]->(grp),
 
-  (grp)-[rel_c:ALLOWED_INHERIT]->(parent),
+  (grp)-[:ALLOWED_INHERIT]->(parent),
 
-  (parent:company)<-[:CHILD_OF*0..3]-(child:company), 
+  (parent)<-[:CHILD_OF*0..3]-(child), 
 
-  (child)<-[rel_b:WORKS_FOR]-(emp),
+  (child)<-[:WORKS_FOR]-(emp),
 
   (emp)-[:HAS_ACCOUNT]->(acc)
 
-RETURN
-admin.name, grp.name, parent.name, child.name, emp.name, acc.name
+RETURN admin.name, grp.name, parent.name, child.name, emp.name, acc.name
 ```
 
 C#
