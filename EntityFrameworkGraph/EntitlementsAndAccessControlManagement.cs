@@ -17,6 +17,41 @@ namespace EntityFrameworkGraph
         static IEnumerable<Relationship> WithLabel(this ObservableCollection<Relationship> rels, Label label)
         { return rels.Where(rel => rel.Label == label); }
 
+        static IEnumerable<Node> Out(this Node node, Label label)
+        { return node.Outgoing.Where(rel => rel.Label == label).Select(rel => rel.B); }
+
+        static IEnumerable<Node> In(this Node node, Label label)
+        { return node.Incoming.Where(rel => rel.Label == label).Select(rel => rel.A); }
+
+        static void NestedForLoopsAux(Node node, int min, int max, Label label, int index, List<Node> nodes)
+        {
+            if (index > max) { }
+            else
+            {
+                foreach (var child in node.In(label))
+                {
+                    if (index >= min && index <= max) nodes.Add(child);
+
+                    NestedForLoopsAux(child, min, max, label, index + 1, nodes);
+                }
+            }
+        }
+
+        static List<Node> In(this Node node, Label label, int min, int max)
+        {
+            var nodes = new List<Node>();
+
+            if (min == 0) 
+            { 
+                nodes.Add(node);
+
+                NestedForLoopsAux(node, min, max, label, 1, nodes);
+            }
+            else NestedForLoopsAux(node, min, max, label, min, nodes);
+            
+            return nodes;
+        }
+
         public static void Init()
         {
             var context = new Context();
@@ -158,33 +193,15 @@ namespace EntityFrameworkGraph
 
                 var admin = Ben;
 
-                foreach (var grp in admin.Outgoing.Where(rel => rel.Label == MEMBER_OF).Select(rel => rel.B))
-                    foreach (var parent in grp.Outgoing.Where(rel => rel.Label == ALLOWED_INHERIT).Select(rel => rel.B))
-                    {
-                        var children = new List<Node>();
-
-                        children.Add(parent);
-
-                        foreach (var child_1 in parent.Incoming.Where(rel => rel.Label == CHILD_OF).Select(rel => rel.A))
-                        {
-                            children.Add(child_1);
-
-                            foreach (var child_2 in child_1.Incoming.Where(rel => rel.Label == CHILD_OF).Select(rel => rel.A))
-                            {
-                                children.Add(child_2);
-
-                                foreach (var child_3 in child_2.Incoming.Where(rel => rel.Label == CHILD_OF).Select(rel => rel.A))
-                                    children.Add(child_3);                                
-                            }
-                        }
-
-                        foreach (var child in children)
-                            foreach (var emp in child.Incoming.Where(rel => rel.Label == WORKS_FOR).Select(rel => rel.A))
-                                foreach (var acc in emp.Outgoing.Where(rel => rel.Label == HAS_ACCOUNT).Select(rel => rel.B))
+                foreach (var grp in admin.Out(MEMBER_OF))
+                    foreach (var parent in grp.Out(ALLOWED_INHERIT))
+                        foreach (var child in parent.In(CHILD_OF, 0, 3))
+                            foreach (var emp in child.In(WORKS_FOR))
+                                foreach (var acc in emp.Out(HAS_ACCOUNT))
                                     Console.WriteLine("{0, -10} {1, -10} {2, -10} {3, -10} {4, -10} {5, -10}",
                                         admin.Title, grp.Title, parent.Title, child.Title, emp.Title, acc.Title);
-                    }
             }
+            
         }
     }
 
