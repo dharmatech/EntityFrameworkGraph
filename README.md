@@ -99,6 +99,20 @@ foreach (var grp in admin.Outgoing.Where(rel => rel.Label == MEMBER_OF).Select(r
 
 ```
 
+With `In` and `Out` extension methods
+
+```C#
+var admin = Ben;
+
+foreach (var grp in admin.Out(MEMBER_OF))
+    foreach (var parent in grp.Out(ALLOWED_INHERIT))
+        foreach (var child in parent.In(CHILD_OF, 0, 3))
+            foreach (var emp in child.In(WORKS_FOR))
+                foreach (var acc in emp.Out(HAS_ACCOUNT))
+                    Console.WriteLine("{0, -10} {1, -10} {2, -10} {3, -10} {4, -10} {5, -10}",
+                        admin.Title, grp.Title, parent.Title, child.Title, emp.Title, acc.Title);
+```
+
 Results of query on console:
 
 ![](http://i.imgur.com/PD6H39r.png)
