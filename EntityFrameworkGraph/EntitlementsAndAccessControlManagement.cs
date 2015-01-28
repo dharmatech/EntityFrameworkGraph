@@ -52,6 +52,9 @@ namespace EntityFrameworkGraph
             return nodes;
         }
 
+        static IEnumerable<Node> OfTag(this IEnumerable<Node> nodes, Tag tag)
+        { return nodes.Where(node => node.Tags.Contains(tag)); }
+
         public static void Init()
         {
             var context = new Context();
@@ -194,13 +197,35 @@ namespace EntityFrameworkGraph
                 var admin = Ben;
 
                 foreach (var grp in admin.Out(MEMBER_OF))
-                    foreach (var parent in grp.Out(ALLOWED_INHERIT))
-                        foreach (var child in parent.In(CHILD_OF, 0, 3))
+                    foreach (var parent in grp.Out(ALLOWED_INHERIT).OfTag(company))
+                        foreach (var child in parent.In(CHILD_OF, 0, 3).OfTag(company))
                             foreach (var emp in child.In(WORKS_FOR))
                                 foreach (var acc in emp.Out(HAS_ACCOUNT))
                                     Console.WriteLine("{0, -10} {1, -10} {2, -10} {3, -10} {4, -10} {5, -10}",
                                         admin.Title, grp.Title, parent.Title, child.Title, emp.Title, acc.Title);
             }
+
+            Console.WriteLine();
+
+            {
+                Console.WriteLine("{0, -10} {1, -10} {2, -10} {3, -10} {4, -10} {5, -10}", "Admin", "Group", "Parent", "Child", "Employee", "Account");
+                Console.WriteLine("{0, -10} {1, -10} {2, -10} {3, -10} {4, -10} {5, -10}", "-----", "-----", "------", "-----", "--------", "-------");
+
+                var admin = Sarah;
+
+                foreach (var grp in admin.Out(MEMBER_OF))
+                    foreach (var parent in grp.Out(ALLOWED_DO_NOT_INHERIT).OfTag(company))
+                        foreach (var child in parent.In(CHILD_OF, 1, 3).OfTag(company))
+                            foreach (var emp in child.In(WORKS_FOR).OfTag(employee))
+                                foreach (var acc in emp.Out(HAS_ACCOUNT))
+                                    Console.WriteLine("{0, -10} {1, -10} {2, -10} {3, -10} {4, -10} {5, -10}",
+                                        admin.Title, grp.Title, parent.Title, child.Title, emp.Title, acc.Title);
+            }
+
+
+
+
+
             
         }
     }
